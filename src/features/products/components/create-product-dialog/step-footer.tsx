@@ -5,9 +5,10 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 interface StepFooterProps {
   onBack?: () => void;
+  isLast?: boolean;
 }
 
-function StepFooter({ onBack }: StepFooterProps) {
+function StepFooter({ onBack, isLast = false }: StepFooterProps) {
   return (
     <DialogFooter
       className={cn(
@@ -21,7 +22,13 @@ function StepFooter({ onBack }: StepFooterProps) {
         </Button>
       )}
       <Button type="submit">
-        Dalej <ArrowRight />
+        {isLast ? (
+          "Zapisz produkt"
+        ) : (
+          <>
+            Dalej <ArrowRight />
+          </>
+        )}
       </Button>
     </DialogFooter>
   );
