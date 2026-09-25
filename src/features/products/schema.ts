@@ -1,5 +1,12 @@
+import { parseAmount } from "@/utils/parseAmount";
 import { z } from "zod";
-import { CATEGORIES, FEATURES, MANUFACTURERS } from "./constants";
+import {
+  CATEGORIES,
+  CURRENCIES,
+  FEATURES,
+  MANUFACTURERS,
+  VAT_RATES,
+} from "./constants";
 
 export const productInfoSchema = z.object({
   name: z
@@ -22,3 +29,25 @@ export const productInfoSchema = z.object({
 });
 
 export type ProductInfoInput = z.input<typeof productInfoSchema>;
+
+const amount = (requiredError: string) =>
+  z
+    .string()
+    .trim()
+    .min(1, { error: requiredError, abort: true })
+    .refine((value) => parseAmount(value) !== null, {
+      error: "Podaj poprawną kwotę, np. 1299.99",
+      abort: true,
+    })
+    .refine((value) => (parseAmount(value) ?? 0) > 0, {
+      error: "Kwota musi być większa od zera",
+    });
+
+export const productPriceSchema = z.object({
+  netPrice: amount("Podaj cenę netto"),
+  grossPrice: amount("Podaj cenę brutto"),
+  vat: z.literal(VAT_RATES, { error: "Wybierz stawkę VAT" }),
+  currency: z.enum(CURRENCIES, { error: "Wybierz walutę" }),
+});
+
+export type ProductPriceInput = z.input<typeof productPriceSchema>;
