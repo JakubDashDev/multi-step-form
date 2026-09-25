@@ -2,10 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* The design is light only, so `dark:` classes in shadcn components stay inert. */
 @custom-variant dark (&:is(.dark *));
 
-/* Colours from the Figma file (it uses the Tailwind v3 palette hexes). */
 @theme {
   --color-background: #fafafa;
   --color-foreground: #0a0a0a;
@@ -50,5 +48,10 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
   }
 }
