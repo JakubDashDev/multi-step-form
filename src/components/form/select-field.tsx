@@ -12,10 +12,17 @@ interface SelectFieldProps {
   field: AnyFieldApi;
   label: string;
   placeholder: string;
-  options: readonly string[];
+  options: readonly (string | number)[];
+  getLabel?: (option: string | number) => string;
 }
 
-function SelectField({ field, label, placeholder, options }: SelectFieldProps) {
+function SelectField({
+  field,
+  label,
+  placeholder,
+  options,
+  getLabel = String,
+}: SelectFieldProps) {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
@@ -23,8 +30,10 @@ function SelectField({ field, label, placeholder, options }: SelectFieldProps) {
       <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
       <Select
         name={field.name}
-        value={field.state.value}
-        onValueChange={field.handleChange}
+        value={String(field.state.value)}
+        onValueChange={(value) =>
+          field.handleChange(options.find((option) => String(option) === value))
+        }
       >
         <SelectTrigger
           id={field.name}
@@ -36,8 +45,8 @@ function SelectField({ field, label, placeholder, options }: SelectFieldProps) {
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (
-            <SelectItem key={option} value={option}>
-              {option}
+            <SelectItem key={option} value={String(option)}>
+              {getLabel(option)}
             </SelectItem>
           ))}
         </SelectContent>
