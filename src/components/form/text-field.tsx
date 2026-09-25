@@ -6,9 +6,10 @@ interface TextFieldProps {
   field: AnyFieldApi;
   label: string;
   placeholder?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
 }
 
-function TextField({ field, label, placeholder }: TextFieldProps) {
+function TextField({ field, label, placeholder, inputMode }: TextFieldProps) {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
@@ -19,6 +20,7 @@ function TextField({ field, label, placeholder }: TextFieldProps) {
         name={field.name}
         className="h-8"
         placeholder={placeholder}
+        inputMode={inputMode}
         value={field.state.value}
         onBlur={field.handleBlur}
         onChange={(event) => field.handleChange(event.target.value)}
