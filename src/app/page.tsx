@@ -6,10 +6,10 @@ import { ProductsProvider } from "@/features/products/products-context";
 
 export default function Home() {
   return (
-    <main className="mx-auto flex w-full max-w-[1240px] flex-col gap-6 px-4 py-12">
+    <main className="mx-auto flex w-full max-w-[1240px] flex-col gap-4 px-4 py-6 md:gap-6 md:py-12">
       <ProductsProvider>
         <div className="flex w-full flex-row flex-wrap items-center">
-          <div className="mr-auto">
+          <div className="mr-auto flex flex-col gap-1">
             <h1 className="text-xl font-bold">Produkty</h1>
             <ProductsCount />
           </div>
