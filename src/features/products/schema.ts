@@ -1,4 +1,5 @@
 import { parseAmount } from "@/utils/parseAmount";
+import { parseInteger } from "@/utils/parseInteger";
 import { z } from "zod";
 import {
   CATEGORIES,
@@ -51,3 +52,66 @@ export const productPriceSchema = z.object({
 });
 
 export type ProductPriceInput = z.input<typeof productPriceSchema>;
+
+const integer = (requiredError: string, minimum: number) =>
+  z
+    .string()
+    .trim()
+    .min(1, { error: requiredError, abort: true })
+    .refine((value) => parseInteger(value) !== null, {
+      error: "Podaj liczbę całkowitą",
+      abort: true,
+    })
+    .refine((value) => (parseInteger(value) ?? 0) >= minimum, {
+      error: `Minimalna wartość to ${minimum}`,
+    });
+
+export const productAvailabilitySchema = z
+  .object({
+    available: z.boolean(),
+    limited: z.boolean(),
+    stock: z.string().trim(),
+    minPerCart: integer("Podaj minimalną ilość", 1),
+    maxPerCart: integer("Podaj maksymalną ilość", 1),
+  })
+  .check((ctx) => {
+    const { limited, stock, minPerCart, maxPerCart } = ctx.value;
+
+    if (limited && stock === "") {
+      ctx.issues.push({
+        code: "custom",
+        message: "Podaj ilość na magazynie",
+        path: ["stock"],
+        input: ctx.value,
+      });
+    } else if (limited && parseInteger(stock) === null) {
+      ctx.issues.push({
+        code: "custom",
+        message: "Podaj liczbę całkowitą",
+        path: ["stock"],
+        input: ctx.value,
+      });
+    }
+
+    const min = parseInteger(minPerCart);
+    const max = parseInteger(maxPerCart);
+
+    if (min !== null && max !== null && min > max) {
+      ctx.issues.push({
+        code: "custom",
+        message: "Minimalna ilość nie może być większa niż maksymalna",
+        path: ["minPerCart"],
+        input: ctx.value,
+      });
+      ctx.issues.push({
+        code: "custom",
+        message: "Maksymalna ilość nie może być mniejsza niż minimalna",
+        path: ["maxPerCart"],
+        input: ctx.value,
+      });
+    }
+  });
+
+export type ProductAvailabilityInput = z.input<
+  typeof productAvailabilitySchema
+>;
