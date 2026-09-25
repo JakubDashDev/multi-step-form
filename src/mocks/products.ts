@@ -1,6 +1,5 @@
 import type { Product } from "@/features/products/types";
 
-/** Mock catalogue shown on first load (the same five products as in the design). */
 export const SEED_PRODUCTS: readonly Product[] = [
   {
     id: "seed-1",
