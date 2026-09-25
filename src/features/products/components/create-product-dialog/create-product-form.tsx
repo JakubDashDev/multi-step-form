@@ -1,15 +1,18 @@
 "use client";
 
 import {
+  productAvailabilitySchema,
   productInfoSchema,
   productPriceSchema,
 } from "@/features/products/schema";
 import type { CreateProductFormValues } from "@/features/products/types";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
+import AvailabilityStep from "./availability-step";
 import InfoStep from "./info-step";
 import PriceStep from "./price-step";
 import StepFooter from "./step-footer";
+import StepForm from "./step-form";
 import Stepper from "./stepper";
 
 const EMPTY_STEP_1 = {
@@ -28,6 +31,14 @@ const EMPTY_STEP_2 = {
   currency: "PLN",
 };
 
+const EMPTY_STEP_3 = {
+  available: true,
+  limited: false,
+  stock: "",
+  minPerCart: "1",
+  maxPerCart: "10",
+};
+
 function CreateProductForm() {
   const [step, setStep] = useState(1);
 
@@ -35,6 +46,7 @@ function CreateProductForm() {
     defaultValues: {
       step1: EMPTY_STEP_1,
       step2: EMPTY_STEP_2,
+      step3: EMPTY_STEP_3,
     } as CreateProductFormValues,
   });
 
@@ -52,17 +64,10 @@ function CreateProductForm() {
           onGroupSubmit={() => setStep(2)}
         >
           {(group) => (
-            <form
-              className="flex min-h-0 flex-col"
-              onSubmit={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                group.handleSubmit();
-              }}
-            >
+            <StepForm onSubmit={() => group.handleSubmit()}>
               <InfoStep form={form} />
               <StepFooter />
-            </form>
+            </StepForm>
           )}
         </form.FormGroup>
       )}
@@ -77,17 +82,28 @@ function CreateProductForm() {
           onGroupSubmit={() => setStep(3)}
         >
           {(group) => (
-            <form
-              className="flex min-h-0 flex-col"
-              onSubmit={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                group.handleSubmit();
-              }}
-            >
+            <StepForm onSubmit={() => group.handleSubmit()}>
               <PriceStep form={form} />
               <StepFooter onBack={() => setStep(1)} />
-            </form>
+            </StepForm>
+          )}
+        </form.FormGroup>
+      )}
+
+      {step === 3 && (
+        <form.FormGroup
+          name="step3"
+          validators={{
+            onChange: productAvailabilitySchema,
+            onSubmit: productAvailabilitySchema,
+          }}
+          onGroupSubmit={() => form.handleSubmit()}
+        >
+          {(group) => (
+            <StepForm onSubmit={() => group.handleSubmit()}>
+              <AvailabilityStep form={form} />
+              <StepFooter onBack={() => setStep(2)} isLast />
+            </StepForm>
           )}
         </form.FormGroup>
       )}
