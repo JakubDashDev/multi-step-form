@@ -26,7 +26,24 @@ export const FEATURES = [
   "Premium",
 ] as const;
 
-/** Polish VAT rates, in percent. */
 export const VAT_RATES = [0, 5, 8, 23] as const;
 
 export const CURRENCIES = ["PLN", "EUR", "USD"] as const;
+
+export const CREATE_PRODUCT_STEPS = [
+  {
+    step: 1,
+    label: "Informacje",
+    description: "Dane podstawowe",
+  },
+  {
+    step: 2,
+    label: "Cena",
+    description: "Dane cenowe",
+  },
+  {
+    step: 3,
+    label: "Dostępność",
+    description: "Stany magazynowe",
+  },
+] as const;

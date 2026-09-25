@@ -1,3 +1,8 @@
+import type {
+  FormAsyncValidateOrFn,
+  FormValidateOrFn,
+  ReactFormExtendedApi,
+} from "@tanstack/react-form";
 import {
   CATEGORIES,
   CURRENCIES,
@@ -5,6 +10,7 @@ import {
   MANUFACTURERS,
   VAT_RATES,
 } from "./constants";
+import type { ProductInfoInput } from "./schema";
 
 export type Manufacturer = (typeof MANUFACTURERS)[number];
 export type Category = (typeof CATEGORIES)[number];
@@ -30,3 +36,25 @@ export type Product = {
   minPerCart: number;
   maxPerCart: number;
 };
+
+export type CreateProductFormValues = {
+  step1: ProductInfoInput;
+};
+
+type Sync = FormValidateOrFn<CreateProductFormValues> | undefined;
+type Async = FormAsyncValidateOrFn<CreateProductFormValues> | undefined;
+
+export type CreateProductFormApi = ReactFormExtendedApi<
+  CreateProductFormValues,
+  Sync,
+  Sync,
+  Async,
+  Sync,
+  Async,
+  Sync,
+  Async,
+  Sync,
+  Async,
+  Async,
+  unknown
+>;
