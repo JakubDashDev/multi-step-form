@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,11 +11,14 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "cn";
 import { Plus, XIcon } from "lucide-react";
+import { useState } from "react";
 import CreateProductForm from "./create-product-form";
 
 function CreateProductDialog() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <Plus /> Dodaj produkt
@@ -38,7 +43,7 @@ function CreateProductDialog() {
           </DialogClose>
         </DialogHeader>
 
-        <CreateProductForm />
+        <CreateProductForm onCreated={() => setOpen(false)} />
       </DialogContent>
     </Dialog>
   );
