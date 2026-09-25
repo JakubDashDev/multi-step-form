@@ -5,9 +5,12 @@ import {
   productInfoSchema,
   productPriceSchema,
 } from "@/features/products/schema";
+import { createProduct } from "@/features/products/api";
+import { useProducts } from "@/features/products/products-context";
 import type { CreateProductFormValues } from "@/features/products/types";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
+import { toast } from "sonner";
 import AvailabilityStep from "./availability-step";
 import InfoStep from "./info-step";
 import PriceStep from "./price-step";
@@ -39,8 +42,13 @@ const EMPTY_STEP_3 = {
   maxPerCart: "10",
 };
 
-function CreateProductForm() {
+interface CreateProductFormProps {
+  onCreated: () => void;
+}
+
+function CreateProductForm({ onCreated }: CreateProductFormProps) {
   const [step, setStep] = useState(1);
+  const { addProduct } = useProducts();
 
   const form = useForm({
     defaultValues: {
@@ -48,6 +56,11 @@ function CreateProductForm() {
       step2: EMPTY_STEP_2,
       step3: EMPTY_STEP_3,
     } as CreateProductFormValues,
+    onSubmit: ({ value }) => {
+      addProduct(createProduct(value));
+      toast.success("Produkt został dodany");
+      onCreated();
+    },
   });
 
   return (
