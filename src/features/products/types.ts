@@ -10,7 +10,7 @@ import {
   MANUFACTURERS,
   VAT_RATES,
 } from "./constants";
-import type { ProductInfoInput } from "./schema";
+import type { ProductInfoInput, ProductPriceInput } from "./schema";
 
 export type Manufacturer = (typeof MANUFACTURERS)[number];
 export type Category = (typeof CATEGORIES)[number];
@@ -39,6 +39,7 @@ export type Product = {
 
 export type CreateProductFormValues = {
   step1: ProductInfoInput;
+  step2: ProductPriceInput;
 };
 
 type Sync = FormValidateOrFn<CreateProductFormValues> | undefined;

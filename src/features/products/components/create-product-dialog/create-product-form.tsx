@@ -1,13 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { DialogFooter } from "@/components/ui/dialog";
-import { productInfoSchema } from "@/features/products/schema";
+import {
+  productInfoSchema,
+  productPriceSchema,
+} from "@/features/products/schema";
 import type { CreateProductFormValues } from "@/features/products/types";
 import { useForm } from "@tanstack/react-form";
-import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import InfoStep from "./info-step";
+import PriceStep from "./price-step";
+import StepFooter from "./step-footer";
 import Stepper from "./stepper";
 
 const EMPTY_STEP_1 = {
@@ -19,11 +21,21 @@ const EMPTY_STEP_1 = {
   features: [],
 };
 
+const EMPTY_STEP_2 = {
+  netPrice: "",
+  grossPrice: "",
+  vat: 23,
+  currency: "PLN",
+};
+
 function CreateProductForm() {
   const [step, setStep] = useState(1);
 
   const form = useForm({
-    defaultValues: { step1: EMPTY_STEP_1 } as CreateProductFormValues,
+    defaultValues: {
+      step1: EMPTY_STEP_1,
+      step2: EMPTY_STEP_2,
+    } as CreateProductFormValues,
   });
 
   return (
@@ -49,12 +61,32 @@ function CreateProductForm() {
               }}
             >
               <InfoStep form={form} />
+              <StepFooter />
+            </form>
+          )}
+        </form.FormGroup>
+      )}
 
-              <DialogFooter className="shrink-0 flex-row justify-end border-t bg-muted px-4 py-4">
-                <Button type="submit">
-                  Dalej <ArrowRight />
-                </Button>
-              </DialogFooter>
+      {step === 2 && (
+        <form.FormGroup
+          name="step2"
+          validators={{
+            onChange: productPriceSchema,
+            onSubmit: productPriceSchema,
+          }}
+          onGroupSubmit={() => setStep(3)}
+        >
+          {(group) => (
+            <form
+              className="flex min-h-0 flex-col"
+              onSubmit={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                group.handleSubmit();
+              }}
+            >
+              <PriceStep form={form} />
+              <StepFooter onBack={() => setStep(1)} />
             </form>
           )}
         </form.FormGroup>
