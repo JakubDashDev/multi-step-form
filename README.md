@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WorkConnect — Product Creation Form
 
-## Getting Started
+A three-step "Add product" form built with Next.js, shadcn/ui, TanStack Form, Zod and nuqs.
 
-First, run the development server:
+## Live app
+
+https://multi-step-form-one-henna.vercel.app/
+
+## Running locally
+
+### With Docker
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker compose up
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). The container mounts the
+project folder, so it hot-reloads the same as running `pnpm dev` directly.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### With Node
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Requirements: Node 20+ and pnpm.
 
-## Learn More
+```bash
+pnpm install
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key decisions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**File structure is organized by domain, not by file type.** Everything about
+products: types, validation schemas, the mock API, state, and components,
+lives under `src/features/products/`. The way a real app would group a
+domain, instead of top-level `components/`, `hooks/`, `types/` folders split
+by what kind of file they are. `src/components/ui/` is the one exception:
+shadcn primitives are genuinely shared across domains, so they stay
+top-level.
 
-## Deploy on Vercel
+**`src/features/products/api.ts` is a simulated backend.** `getProducts`
+paginates the in-memory product list and `createProduct` turns a validated
+form submission into a stored `Product`, the same shape a real endpoint
+would return. There's no real backend for this task, so state lives in a
+React context (`products-context.tsx`) seeded from `src/mocks/products.ts`. In a real app with an actual API, I'd reach for RTK Query (or
+plain Axios).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Sonner for the "product added" toast.** It's the toast library shadcn/ui
+documents and ships a ready component for, so it drops in with no extra
+wiring.
